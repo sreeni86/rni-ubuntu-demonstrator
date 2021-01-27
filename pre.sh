@@ -463,7 +463,8 @@ run "Setting up Network Interfaces" \
 	MACVLAN=macvlan0
 	DHCP=ipv4
 	EOF
-
+    "
+    "
     cat <<EOF >$ROOTFS/etc/systemd/network/macvtap0.netdev
 	[NetDev]
 	Name=macvtap0
@@ -475,7 +476,8 @@ run "Setting up Network Interfaces" \
 	[MACVTAP]
 	Mode=bridge
 	EOF
-
+    "
+    "
     cat <<EOF >$ROOTFS/etc/systemd/network/macvtap0.network
 	[Match]
 	Name=macvtap0
@@ -483,7 +485,8 @@ run "Setting up Network Interfaces" \
 	[Network]
 	IPForward=yes
 	EOF
-
+    "
+    "
     cat <<EOF >$ROOTFS/etc/systemd/network/macvtap1.netdev
 	[NetDev]
 	Name=macvtap1
@@ -495,7 +498,8 @@ run "Setting up Network Interfaces" \
 	[MACVTAP]
 	Mode=bridge
 	EOF
-
+    "
+    "
     cat <<EOF >$ROOTFS/etc/systemd/network/macvtap1.network
 	[Match]
 	Name=macvtap1
@@ -503,7 +507,8 @@ run "Setting up Network Interfaces" \
 	[Network]
 	IPForward=yes
 	EOF
-
+    "
+    "
     cat <<EOF >$ROOTFS/etc/systemd/network/macvtap2.netdev
 	[NetDev]
 	Name=macvtap2
@@ -515,7 +520,8 @@ run "Setting up Network Interfaces" \
 	[MACVTAP]
 	Mode=bridge
 	EOF
-
+    "
+    "
     cat <<EOF >$ROOTFS/etc/systemd/network/macvtap2.network
 	[Match]
 	Name=macvtap2
@@ -523,7 +529,8 @@ run "Setting up Network Interfaces" \
 	[Network]
 	IPForward=yes
 	EOF
-
+    "
+    "
     cat <<EOF >$ROOTFS/etc/systemd/network/macvlan0.netdev
 	[NetDev]
 	Name=macvlan0
@@ -535,7 +542,8 @@ run "Setting up Network Interfaces" \
 	[MACVLAN]
 	Mode=bridge
 	EOF
-
+    "
+    "
     cat <<EOF >$ROOTFS/etc/systemd/network/macvlan0.network
 	[Match]
 	Name=macvlan0
@@ -545,7 +553,6 @@ run "Setting up Network Interfaces" \
 	EOF
     "
     
-
 # --- Install Extra Packages ---
 run "Installing Docker on Ubuntu ${param_ubuntuversion}" \
     "docker run -i --rm --privileged --name ubuntu-installer ${DOCKER_PROXY_ENV} -v /dev:/dev -v /sys/:/sys/ -v $ROOTFS:/target/root ubuntu:${param_ubuntuversion} sh -c \
