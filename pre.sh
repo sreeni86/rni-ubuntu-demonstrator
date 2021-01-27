@@ -449,6 +449,101 @@ if [ ! -z "${param_proxysocks}" ]; then
         "$TMP/provisioning.log"
 fi
 
+# --- Implementing Macvlan & Macvtap devices ---
+run "Setting up Network Interfaces" \
+    'cat <<EOF >$ROOTFS/etc/systemd/network/80-wired.network
+	[Match]
+	Name=en*
+
+	[Network]
+	MACVTAP=macvtap0
+	MACVTAP=macvtap1
+	MACVTAP=macvtap2
+	MACVLAN=macvlan0
+	DHCP=ipv4
+	EOF && \
+
+    cat <<EOF >$ROOTFS/etc/systemd/network/macvtap0.netdev
+	[NetDev]
+	Name=macvtap0
+	Kind=macvtap
+
+	[Match]
+	Virtualization=!vm
+
+	[MACVTAP]
+	Mode=bridge
+	EOF && \
+
+    cat <<EOF >$ROOTFS/etc/systemd/network/macvtap0.network
+	[Match]
+	Name=macvtap0
+
+	[Network]
+	IPForward=yes
+	EOF && \
+
+    cat <<EOF >$ROOTFS/etc/systemd/network/macvtap1.netdev
+	[NetDev]
+	Name=macvtap1
+	Kind=macvtap
+
+	[Match]
+	Virtualization=!vm
+
+	[MACVTAP]
+	Mode=bridge
+	EOF && \
+
+    cat <<EOF >$ROOTFS/etc/systemd/network/macvtap1.network
+	[Match]
+	Name=macvtap1
+
+	[Network]
+	IPForward=yes
+	EOF && \
+
+    cat <<EOF >$ROOTFS/etc/systemd/network/macvtap2.netdev
+	[NetDev]
+	Name=macvtap2
+	Kind=macvtap
+
+	[Match]
+	Virtualization=!vm
+
+	[MACVTAP]
+	Mode=bridge
+	EOF && \
+
+    cat <<EOF >$ROOTFS/etc/systemd/network/macvtap2.network
+	[Match]
+	Name=macvtap2
+
+	[Network]
+	IPForward=yes
+	EOF && \
+
+    cat <<EOF >$ROOTFS/etc/systemd/network/macvlan0.netdev
+	[NetDev]
+	Name=macvlan0
+	Kind=macvlan
+
+	[Match]
+	Virtualization=!vm
+
+	[MACVLAN]
+	Mode=bridge
+	EOF && \
+
+    cat <<EOF >$ROOTFS/etc/systemd/network/macvlan0.network
+	[Match]
+	Name=macvlan0
+
+	[Network]
+	DHCP=ipv4
+	EOF'
+    
+
 # --- Install Extra Packages ---
 run "Installing Docker on Ubuntu ${param_ubuntuversion}" \
     "docker run -i --rm --privileged --name ubuntu-installer ${DOCKER_PROXY_ENV} -v /dev:/dev -v /sys/:/sys/ -v $ROOTFS:/target/root ubuntu:${param_ubuntuversion} sh -c \
