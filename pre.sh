@@ -451,7 +451,8 @@ fi
 
 # --- Implementing Macvlan & Macvtap devices ---
 run "Setting up Network Interfaces" \
-    'cat <<EOF >$ROOTFS/etc/systemd/network/80-wired.network
+    "
+    cat <<EOF >$ROOTFS/etc/systemd/network/80-wired.network
 	[Match]
 	Name=en*
 
@@ -461,7 +462,7 @@ run "Setting up Network Interfaces" \
 	MACVTAP=macvtap2
 	MACVLAN=macvlan0
 	DHCP=ipv4
-	EOF && \
+	EOF
 
     cat <<EOF >$ROOTFS/etc/systemd/network/macvtap0.netdev
 	[NetDev]
@@ -473,7 +474,7 @@ run "Setting up Network Interfaces" \
 
 	[MACVTAP]
 	Mode=bridge
-	EOF && \
+	EOF
 
     cat <<EOF >$ROOTFS/etc/systemd/network/macvtap0.network
 	[Match]
@@ -481,7 +482,7 @@ run "Setting up Network Interfaces" \
 
 	[Network]
 	IPForward=yes
-	EOF && \
+	EOF
 
     cat <<EOF >$ROOTFS/etc/systemd/network/macvtap1.netdev
 	[NetDev]
@@ -493,7 +494,7 @@ run "Setting up Network Interfaces" \
 
 	[MACVTAP]
 	Mode=bridge
-	EOF && \
+	EOF
 
     cat <<EOF >$ROOTFS/etc/systemd/network/macvtap1.network
 	[Match]
@@ -501,7 +502,7 @@ run "Setting up Network Interfaces" \
 
 	[Network]
 	IPForward=yes
-	EOF && \
+	EOF
 
     cat <<EOF >$ROOTFS/etc/systemd/network/macvtap2.netdev
 	[NetDev]
@@ -513,7 +514,7 @@ run "Setting up Network Interfaces" \
 
 	[MACVTAP]
 	Mode=bridge
-	EOF && \
+	EOF
 
     cat <<EOF >$ROOTFS/etc/systemd/network/macvtap2.network
 	[Match]
@@ -521,7 +522,7 @@ run "Setting up Network Interfaces" \
 
 	[Network]
 	IPForward=yes
-	EOF && \
+	EOF
 
     cat <<EOF >$ROOTFS/etc/systemd/network/macvlan0.netdev
 	[NetDev]
@@ -533,7 +534,7 @@ run "Setting up Network Interfaces" \
 
 	[MACVLAN]
 	Mode=bridge
-	EOF && \
+	EOF
 
     cat <<EOF >$ROOTFS/etc/systemd/network/macvlan0.network
 	[Match]
@@ -541,7 +542,8 @@ run "Setting up Network Interfaces" \
 
 	[Network]
 	DHCP=ipv4
-	EOF'
+	EOF
+    "
     
 
 # --- Install Extra Packages ---
