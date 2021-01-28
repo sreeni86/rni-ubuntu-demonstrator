@@ -1,0 +1,9 @@
+[NetDev]
+Name=macvlan0
+Kind=macvlan
+
+[Match]
+Virtualization=!vm
+
+[MACVLAN]
+Mode=bridge

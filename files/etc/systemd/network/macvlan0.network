@@ -1,0 +1,5 @@
+[Match]
+Name=macvlan0
+
+[Network]
+DHCP=ipv4

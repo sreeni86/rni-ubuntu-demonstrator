@@ -1,6 +1,10 @@
 [Match]
 Name=en*
+Virtualization=!vm
 
 [Network]
-DHCP=yes
+MACVTAP=macvtap0
+MACVTAP=macvtap1
+MACVTAP=macvtap2
+MACVLAN=macvlan0
 

@@ -1,0 +1,5 @@
+[Match]
+Name=macvtap0
+
+[Network]
+IPForward=yes

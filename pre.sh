@@ -378,124 +378,6 @@ else
     export MOUNT_DURING_INSTALL="chmod a+rw /dev/null /dev/zero && mount ${BOOT_PARTITION} /boot"
 fi
 
-# --- Implementing Macvlan & Macvtap devices ---
-
-cat <<EOF >$ROOTFS/etc/systemd/network/80-wired.network
-[Match]
-Name=en*
-
-[Network]
-MACVTAP=macvtap0
-MACVTAP=macvtap1
-MACVTAP=macvtap2
-MACVLAN=macvlan0
-DHCP=ipv4
-EOF
-
-cat <<EOF >$ROOTFS/etc/systemd/network/macvtap0.netdev
-[NetDev]
-Name=macvtap0
-Kind=macvtap
-
-[Match]
-Virtualization=!vm
-
-[MACVTAP]
-Mode=bridge
-EOF
-
-cat <<EOF >$ROOTFS/etc/systemd/network/macvtap0.network
-[Match]
-Name=macvtap0
-
-[Network]
-IPForward=yes
-EOF
-
-cat <<EOF >$ROOTFS/etc/systemd/network/macvtap1.netdev
-[NetDev]
-Name=macvtap1
-Kind=macvtap
-
-[Match]
-Virtualization=!vm
-
-[MACVTAP]
-Mode=bridge
-EOF
-
-cat <<EOF >$ROOTFS/etc/systemd/network/macvtap1.network
-[Match]
-Name=macvtap1
-
-[Network]
-IPForward=yes
-EOF
-
-cat <<EOF >$ROOTFS/etc/systemd/network/macvtap2.netdev
-[NetDev]
-Name=macvtap2
-Kind=macvtap
-
-[Match]
-Virtualization=!vm
-
-[MACVTAP]
-Mode=bridge
-EOF
-
-cat <<EOF >$ROOTFS/etc/systemd/network/macvtap2.network
-[Match]
-Name=macvtap2
-
-[Network]
-IPForward=yes
-EOF
-
-cat <<EOF >$ROOTFS/etc/systemd/network/macvlan0.netdev
-[NetDev]
-Name=macvlan0
-Kind=macvlan
-
-[Match]
-Virtualization=!vm
-
-[MACVLAN]
-Mode=bridge
-EOF
-
-cat <<EOF >$ROOTFS/etc/systemd/network/macvlan0.network
-[Match]
-Name=macvlan0
-
-[Network]
-DHCP=ipv4
-EOF
-
-## Add UDEV Rules ##
-
-cat <<EOF >/etc/udev/rules.d/10-kvm.rules
-KERNEL=="kvm", NAME="%k", GROUP="kvm", MODE="0660"
-
-KERNEL=="kvm", MODE="0660", GROUP="kvm"
-DEVPATH=="kvm", MODE="0660", GROUP="kvm"
-
-KERNEL=="vfio", MODE="0660", GROUP="kvm"
-DEVPATH=="vfio/vfio", MODE="0660", GROUP="kvm"
-
-SUBSYSTEM=="vfio", MODE="0660", GROUP="kvm"
-DEVPATH=="vfio/0", MODE="0660", GROUP="kvm"
-
-SUBSYSTEM=="usb", MODE="0660", GROUP="kvm"
-EOF
-
-cat <<EOF >/etc/udev/rules.d/80-tap-kvm-group.rules
-KERNEL=="tun", GROUP="kvm", MODE="0660",
-OPTIONS+="static_node=net/tun"
-SUBSYSTEM=="macvtap", GROUP="kvm", MODE="0660"
-EOF
-
-
 # --- Enabling Ubuntu boostrap items ---
 HOSTNAME="ubuntu-$(tr </dev/urandom -dc a-f0-9 | head -c10)"
 run "Enabling Ubuntu boostrap items" \
@@ -505,6 +387,14 @@ run "Enabling Ubuntu boostrap items" \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/hosts | sed -e \"s#@@HOSTNAME@@#${HOSTNAME}#g\" > $ROOTFS/etc/hosts && \
     mkdir -p $ROOTFS/etc/systemd/network/ && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/wired.network > $ROOTFS/etc/systemd/network/wired.network && \
+    wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvtap0.netdev > $ROOTFS/etc/systemd/network/macvtap0.netdev && \
+    wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvtap1.netdev > $ROOTFS/etc/systemd/network/macvtap1.netdev && \
+    wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvtap2.netdev > $ROOTFS/etc/systemd/network/macvtap2.netdev && \
+    wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvtap0.network > $ROOTFS/etc/systemd/network/macvtap0.network && \
+    wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvtap0.network > $ROOTFS/etc/systemd/network/macvtap1.network && \
+    wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvtap0.network > $ROOTFS/etc/systemd/network/macvtap2.network && \
+    wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvlan0.netdev > $ROOTFS/etc/systemd/network/macvlan0.netdev && \
+    wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvlan0.network > $ROOTFS/etc/systemd/network/macvlan0.network && \
     sed -i 's#^GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"#GRUB_CMDLINE_LINUX_DEFAULT=\"kvmgt vfio-iommu-type1 vfio-mdev i915.enable_gvt=1 kvm.ignore_msrs=1 intel_iommu=on drm.debug=0\"#' $ROOTFS/etc/default/grub && \
     echo \"${HOSTNAME}\" > $ROOTFS/etc/hostname && \
     echo \"LANG=en_US.UTF-8\" >> $ROOTFS/etc/default/locale && \

@@ -1,0 +1,9 @@
+[NetDev]
+Name=macvtap0
+Kind=macvtap
+
+[Match]
+Virtualization=!vm
+
+[MACVTAP]
+Mode=bridge
