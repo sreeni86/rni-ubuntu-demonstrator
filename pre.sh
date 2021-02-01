@@ -205,7 +205,7 @@ else
 	reboot
 fi
 
-dd if=/dev/zero of=${DRIVE} bs=1M
+# dd if=/dev/zero of=${DRIVE} bs=1M
 
 export BOOTFS=/target/boot
 export ROOTFS=/target/root
@@ -480,44 +480,6 @@ run "Installing Docker on Ubuntu ${param_ubuntuversion}" \
     apt-key fingerprint 0EBFCD88 && \
     sudo add-apt-repository \\\"deb [arch=amd64] https://download.docker.com/linux/ubuntu ${DOCKER_UBUNTU_RELEASE} stable\\\" && \
     apt-get update && \
-    sudo apt install -y git libfdt-dev libpixman-1-dev libssl-dev vim socat libsdl2-dev libspice-server-dev autoconf libtool xtightvncviewer tightvncserver x11vnc uuid-runtime uuid uml-utilities bridge-utils python-dev liblzma-dev libc6-dev libegl1-mesa-dev libepoxy-dev libdrm-dev libgbm-dev libaio-dev libusb-1.0.0-dev libgtk-3-dev bison libusbredirparser-dev && \
-    wget https://download.qemu.org/qemu-4.2.0.tar.xz && \
-    tar xvf qemu-4.2.0.tar.xz && \
-    cd qemu-4.2.0 && \
-    ./configure --prefix=/usr \ 
-        --enable-kvm \ 
-	--disable-xen \ 
-	--enable-libusb \ 
-	--enable-sdl \ 
-	--enable-vhost-net \ 
-	--enable-spice \ 
-	--enable-opengl \ 
-	--enable-gtk \ 
-	--target-list=x86_64-softmmu \
-	--enable-usb-redir && \
-    make -j `nproc` && \
-    sudo make install && \
-    cd - && \
-    git clone https://github.com/coreboot/seabios.git && \
-    cd seabios && \
-    make && \
-    sudo mkdir -p /usr/share/firmware && \
-    sudo cp -v out/bios.bin /usr/share/firmware/ && \
-    sudo apt-get -q install build-essential uuid-dev iasl git gcc-5 nasm python3-distutils && \
-    cd - && \
-    mkdir edk2_src && \
-    cd edk2_src && \
-    git clone https://github.com/tianocore/edk2 && \
-    cd edk2 && \
-    git submodule update --init && \
-    make -C BaseTools && \
-    . edksetup.sh && \
-    build -b RELEASE -t GCC5 -a X64 -p OvmfPkg/OvmfPkgX64.dsc -D NETWORK_IP4_ENABLE -D NETWORK_ENABLE && \
-    qemu-img convert -f raw -O qcow2 ~/edk2_src/edk2/Build/OvmfX64/RELEASE_GCC5/FV/OVMF_CODE.fd ~/edk2_src/edk2/Build/OvmfX64/RELEASE_GCC5/FV/ovmf.code.qcow2 && \
-    qemu-img convert -f raw -O qcow2 ~/edk2_src/edk2/Build/OvmfX64/RELEASE_GCC5/FV/OVMF_VARS.fd ~/edk2_src/edk2/Build/OvmfX64/RELEASE_GCC5/FV/ovmf.vars2.qcow2 && \
-    mkdir ~/images && \
-    cp -v ~/edk2_src/edk2/Build/OvmfX64/RELEASE_GCC5/FV/ovmf.code.qcow2 ~/images && \
-    cp -v ~/edk2_src/edk2/Build/OvmfX64/RELEASE_GCC5/FV/ovmf.vars2.qcow2 ~/images && \
     apt-get install -y docker-ce docker-ce-cli containerd.io\"'" \
     "$TMP/provisioning.log"
 
