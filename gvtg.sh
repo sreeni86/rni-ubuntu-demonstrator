@@ -2,16 +2,13 @@
 
 name=gvtg-bin
 cwd=$(pwd)
-work_dir=data/srv/tftp/images/${name}
+work_dir=./build
 kdir="kernel"
 krevision="3.0"
 kversion="vt-sharing-ubuntu"
 repo="https://github.com/intel/linux-intel-lts"
 branch="5.4/yocto"
-#tag="lts-v5.4.81-yocto-201210T224912Z"
-tag="e00ce2dbe204df8675b04a820f6a4e6fc0f784b1"
-srcrev="e00ce2dbe204df8675b04a820f6a4e6fc0f784b1"
-kernel_config_url="https://kernel.ubuntu.com/~kernel-ppa/config/focal/linux/5.4.0-44.48/amd64-config.flavour.generic"
+srcrev="e54641516247a77adbc3c314ddf1f7e8f7cc2787"
 qemu_rel=qemu-4.2.0
 qemu_dir=${qemu_rel}
 prebuilt="prebuilt"
@@ -73,15 +70,11 @@ function build_qemu() {
 }
 
 function pull_kernel() {
-  [[ ! -d "$work_dir/$kdir" ]] && git clone --depth 1 $repo --branch $branch --single-branch $work_dir/$kdir && cd $work_dir/$kdir; git checkout $srcrev
+  [[ ! -d "$work_dir/$kdir" ]] && git clone $repo --branch $branch --single-branch $work_dir/$kdir && cd $work_dir/$kdir; git checkout $srcrev && cd $cwd
 }
 
 function kernel_config() {
-  if [ ! -z "$kernel_config_url" ]; then
-    /usr/bin/wget -q -O $work_dir/$kdir/.config $kernel_config_url
-  fi
-
-  ( cd $work_dir/$kdir && yes "" | make oldconfig && cd $cwd)
+  ( cd $work_dir/$kdir && echo "" | make oldconfig && cd $cwd)
 }
 
 function compile_kernel() {
