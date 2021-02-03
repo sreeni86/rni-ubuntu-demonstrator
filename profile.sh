@@ -9,7 +9,7 @@ set -a
 source /opt/bootstrap/functions
 
 # --- Config
-KERNEL_VER="5.4.91-vt-sharing-ubuntu_3.0"
+KERNEL_VER="5.4.73-vt-sharing-ubuntu_3.0"
 ubuntu_bundles="ubuntu-desktop openssh-server"
 ubuntu_packages="net-tools vim software-properties-common apt-transport-https wget libspice-server-dev libsdl2-2.0-0 libaio-dev"
 
@@ -40,5 +40,20 @@ run "Installing qemu on Ubuntu ${param_bootstrapurl} " \
     "wget http://${param_httpserver}/tftp/images/gvtg-bin/prebuilt/qemu.tar.gz -P ${ROOTFS}/usr && \
      tar xvf ${ROOTFS}/usr/qemu.tar.gz -C ${ROOTFS}/usr && \
      rm ${ROOTFS}/usr/qemu.tar.gz " \
+    ${PROVISION_LOG}
+
+
+# --- Install seabios files ---
+run "Installing seabios on Ubuntu ${param_bootstrapurl} " \
+    "wget http://${param_httpserver}/tftp/images/gvtg-bin/prebuilt/seabios.tar.gz -P ${ROOTFS}/usr && \
+     tar xvf ${ROOTFS}/usr/seabios.tar.gz -C ${ROOTFS}/usr/share/firmware && \
+     rm ${ROOTFS}/usr/seabios.tar.gz " \
+    ${PROVISION_LOG}
+
+# --- Install edk files ---
+run "Installing edk on Ubuntu ${param_bootstrapurl} " \
+    "wget http://${param_httpserver}/tftp/images/gvtg-bin/prebuilt/edk.tar.gz -P ${ROOTFS}/usr && \
+     tar xvf ${ROOTFS}/usr/edk.tar.gz -C ${ROOTFS}/usr/ && \
+     rm ${ROOTFS}/usr/edk.tar.gz " \
     ${PROVISION_LOG}
 

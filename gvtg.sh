@@ -69,6 +69,52 @@ function build_qemu() {
   create_qemu_package
 }
 
+function build_seabios_bin() {
+  cd $cwd
+  cd $work_dir
+  git clone https://github.com/coreboot/seabios.git           
+  cd seabios
+  make
+  ls -l out/bios.bin
+}
+
+function create_seabios_package() {
+  cd ${work_dir}/seabios/out
+  tar cvf seabios.tar.gz bios.bin
+  cd $cwd 
+}
+
+function build_seabios() {
+  build_seabios_bin
+  create_seabios_package
+}
+
+function build_edk_bin() {
+  cd $cwd
+  cd $work_dir
+  git clone https://github.com/tianocore/edk2
+  cd edk2
+  git submodule update --init
+  make -C BaseTools
+  . edksetup.sh 
+  build -b RELEASE -t GCC5 -a X64 -p OvmfPkg/OvmfPkgX64.dsc -D NETWORK_IP4_ENABLE -D NETWORK_ENABLE
+
+  qemu-img convert -f raw -O qcow2 ${work_dir}/edk2/Build/OvmfX64/RELEASE_GCC5/FV/OVMF_CODE.fd ${work_dir}/edk2/Build/OvmfX64/RELEASE_GCC5/FV/ovmf.code.qcow2
+
+  qemu-img convert -f raw -O qcow2 ${work_dir}/edk2/Build/OvmfX64/RELEASE_GCC5/FV/OVMF_VARS.fd ${work_dir}/edk2/Build/OvmfX64/RELEASE_GCC5/FV/ovmf.vars2.qcow2
+}
+
+function create_edk_package() {
+  cd ${work_dir}/edk2/Build/OvmfX64/RELEASE_GCC5/FV/
+  tar cvf edk.tar.gz ovmf.code.qcow2 ovmf.vars2.qcow2
+  cd $cwd 
+}
+
+function build_edk() {
+  build_edk_bin
+  create_edk_package
+}
+
 function pull_kernel() {
   [[ ! -d "$work_dir/$kdir" ]] && git clone $repo --branch $branch --single-branch $work_dir/$kdir && cd $work_dir/$kdir; git checkout $srcrev && cd $cwd
 }
@@ -89,6 +135,8 @@ function build_kernel() {
 
 function copy_binaries() {
   cp $work_dir/$qemu_dir/output/qemu.tar.gz $work_dir/$prebuilt/
+  cp $work_dir/seabios/out/seabios.tar.gz $work_dir/$prebuilt/
+  cp $work_dir/edk2/Build/OvmfX64/RELEASE_GCC5/FV/edk.tar.gz $work_dir/$prebuilt/
   cp $work_dir/linux-headers-* $work_dir/$prebuilt/
   cp $work_dir/linux-image-* $work_dir/$prebuilt/
   (cd $work_dir/$prebuilt && chmod 777 * && cd -)
@@ -98,6 +146,8 @@ function copy_binaries() {
 function run() {
   create_output_dir
   build_qemu
+  buil_seabios
+  build_edk
   build_kernel
   copy_binaries
 }
