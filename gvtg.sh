@@ -79,6 +79,7 @@ function build_seabios_bin() {
 }
 
 function create_seabios_package() {
+  cd $cwd
   cd ${work_dir}/seabios/out
   tar cvf seabios.tar.gz bios.bin
   cd $cwd 
@@ -98,15 +99,12 @@ function build_edk_bin() {
   make -C BaseTools
   . edksetup.sh 
   build -b RELEASE -t GCC5 -a X64 -p OvmfPkg/OvmfPkgX64.dsc -D NETWORK_IP4_ENABLE -D NETWORK_ENABLE
-
-  qemu-img convert -f raw -O qcow2 ${work_dir}/edk2/Build/OvmfX64/RELEASE_GCC5/FV/OVMF_CODE.fd ${work_dir}/edk2/Build/OvmfX64/RELEASE_GCC5/FV/ovmf.code.qcow2
-
-  qemu-img convert -f raw -O qcow2 ${work_dir}/edk2/Build/OvmfX64/RELEASE_GCC5/FV/OVMF_VARS.fd ${work_dir}/edk2/Build/OvmfX64/RELEASE_GCC5/FV/ovmf.vars2.qcow2
 }
 
 function create_edk_package() {
+  cd $cwd
   cd ${work_dir}/edk2/Build/OvmfX64/RELEASE_GCC5/FV/
-  tar cvf edk.tar.gz ovmf.code.qcow2 ovmf.vars2.qcow2
+  tar cvf edk.tar.gz OVMF_CODE.fd OVMF_VARS.fd
   cd $cwd 
 }
 
