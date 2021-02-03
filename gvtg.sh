@@ -146,7 +146,7 @@ function copy_binaries() {
 function run() {
   create_output_dir
   build_qemu
-  buil_seabios
+  build_seabios
   build_edk
   build_kernel
   copy_binaries
