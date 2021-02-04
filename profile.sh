@@ -45,15 +45,15 @@ run "Installing qemu on Ubuntu ${param_bootstrapurl} " \
 
 # --- Install seabios files ---
 run "Installing seabios on Ubuntu ${param_bootstrapurl} " \
-    "wget http://${param_httpserver}/tftp/images/gvtg-bin/prebuilt/seabios.tar.gz -P ${ROOTFS}/usr && \
-     tar xvf ${ROOTFS}/usr/seabios.tar.gz -C ${ROOTFS}/usr/share/firmware && \
-     rm ${ROOTFS}/usr/seabios.tar.gz " \
+    "wget http://${param_httpserver}/tftp/images/gvtg-bin/prebuilt/seabios.tar.gz -P ${ROOTFS}/usr/share/firmware && \
+     tar xvf ${ROOTFS}/usr/share/firmware/seabios.tar.gz -C ${ROOTFS}/usr/share/firmware && \
+     rm ${ROOTFS}/usr/share/firmware/seabios.tar.gz " \
     ${PROVISION_LOG}
 
 # --- Install edk files ---
 run "Installing edk on Ubuntu ${param_bootstrapurl} " \
-    "wget http://${param_httpserver}/tftp/images/gvtg-bin/prebuilt/edk.tar.gz -P ${ROOTFS}/usr && \
-     tar xvf ${ROOTFS}/usr/edk.tar.gz -C ${ROOTFS}/usr/ && \
-     rm ${ROOTFS}/usr/edk.tar.gz " \
+    "wget http://${param_httpserver}/tftp/images/gvtg-bin/prebuilt/edk.tar.gz -P ${ROOTFS}/usr/share/ovmf && \
+     tar xvf ${ROOTFS}/usr/share/ovmf/edk.tar.gz -C ${ROOTFS}/usr/share/ovmf && \
+     rm ${ROOTFS}/usr/share/ovmf/edk.tar.gz " \
     ${PROVISION_LOG}
 
