@@ -2,7 +2,7 @@
 
 name=gvtg-bin
 cwd=$(pwd)
-work_dir=./build
+work_dir=data/srv/tftp/images/${name}
 kdir="kernel"
 krevision="3.0"
 kversion="vt-sharing-ubuntu"
