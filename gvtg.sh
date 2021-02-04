@@ -118,7 +118,11 @@ function pull_kernel() {
 }
 
 function kernel_config() {
-  ( cd $work_dir/$kdir && echo "" | make oldconfig && cd $cwd)
+  mv /etc/initramfs-tools/modules "/etc/initramfs-tools/modules_`date`"
+  echo $'kvmgt\nvfio\nvfio_mdev\nvfio-pci\nvfio_iommu_type1' >> /etc/initramfs-tools/modules
+  update-initramfs -u
+
+  ( cd $work_dir/$kdir && echo “”|make oldconfig && cd $cwd)
 }
 
 function compile_kernel() {
