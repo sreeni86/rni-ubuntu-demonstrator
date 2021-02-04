@@ -333,8 +333,10 @@ if [[ $param_parttype == 'efi' ]]; then
             update-grub && \
             adduser --quiet --disabled-password --shell /bin/bash --gecos \\\"\\\" ${param_username} && \
             addgroup --system admin && \
+	    groupadd kvm && \
             echo \\\"${param_username}:${param_password}\\\" | chpasswd && \
             usermod -a -G admin ${param_username} && \
+	    usermod -a -G kvm ${param_username} && \
             apt install -y tasksel && \
             tasksel install ${ubuntu_bundles} && \
             apt install -y ${ubuntu_packages} && \
@@ -368,8 +370,10 @@ else
             grub-install ${DRIVE} && \
             adduser --quiet --disabled-password --shell /bin/bash --gecos \\\"\\\" ${param_username} && \
             addgroup --system admin && \
+            groupadd kvm && \
             echo \\\"${param_username}:${param_password}\\\" | chpasswd && \
             usermod -a -G admin ${param_username} && \
+            usermod -a -G kvm ${param_username} && \
             apt install -y tasksel && \
             tasksel install ${ubuntu_bundles} && \
             apt install -y ${ubuntu_packages} && \
@@ -397,6 +401,8 @@ run "Enabling Ubuntu boostrap items" \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvtap2.network > $ROOTFS/etc/systemd/network/macvtap2.network && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvlan0.netdev > $ROOTFS/etc/systemd/network/macvlan0.netdev && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvlan0.network > $ROOTFS/etc/systemd/network/macvlan0.network && \
+    wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/udev/rules.d/10-kvm.rules > $ROOTFS/etc/udev/rules.d/10-kvm.rules && \
+    wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/udev/rules.d/80-tap-kvm-group.rules > $ROOTFS/etc/udev/rules.d/80-tap-kvm-group.rules && \
     sed -i 's#^GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"#GRUB_CMDLINE_LINUX_DEFAULT=\"kvmgt vfio-iommu-type1 vfio-mdev i915.enable_gvt=1 kvm.ignore_msrs=1 intel_iommu=on drm.debug=0\"#' $ROOTFS/etc/default/grub && \
     echo \"${HOSTNAME}\" > $ROOTFS/etc/hostname && \
     echo \"LANG=en_US.UTF-8\" >> $ROOTFS/etc/default/locale && \
