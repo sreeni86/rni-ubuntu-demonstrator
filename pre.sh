@@ -394,8 +394,6 @@ run "Enabling Ubuntu boostrap items" \
     mkdir -p $ROOTFS/etc/systemd/network/ && \
     mkdir -p $ROOTFS/usr/share/firmware/ && \
     mkdir -p $ROOTFS/usr/share/ovmf/ && \
-    rmdir $ROOTFS/etc/systemd/system/network-online.target.wants && \
-    rm -rf $ROOTFS/etc/systemd/system/show-ip.service && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/wired.network > $ROOTFS/etc/systemd/network/wired.network && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvtap0.netdev > $ROOTFS/etc/systemd/network/macvtap0.netdev && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvtap1.netdev > $ROOTFS/etc/systemd/network/macvtap1.netdev && \
