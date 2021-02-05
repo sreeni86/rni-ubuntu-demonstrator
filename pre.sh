@@ -387,20 +387,20 @@ fi
 # --- Enabling Ubuntu boostrap items ---
 HOSTNAME="ubuntu-$(tr </dev/urandom -dc a-f0-9 | head -c10)"
 run "Enabling Ubuntu boostrap items" \
-    "wget --header \"Authorization: token ${param_token}\" -O $ROOTFS/etc/systemd/system/show-ip.service ${param_basebranch}/systemd/show-ip.service && \
-    echo "Here 1" && \
+    "wget --header \"Authorization: token ${param_token}\" -O ${param_basebranch}/systemd/show-ip.service $ROOTFS/etc/systemd/system/show-ip.service && \
+    echo \\\"Here 1\\\" && \
     mkdir -p $ROOTFS/etc/systemd/system/network-online.target.wants/ && \
-    echo "Here 2" && \
+    echo \\\"Here 2\\\" && \
     ln -s /etc/systemd/system/show-ip.service $ROOTFS/etc/systemd/system/network-online.target.wants/show-ip.service; \
-    echo "Here 3" && \
+    echo \\\"Here 3\\\" && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/hosts | sed -e \"s#@@HOSTNAME@@#${HOSTNAME}#g\" > $ROOTFS/etc/hosts && \
-    echo "Here 4" && \
+    echo \\\"Here 4\\\" && \
     mkdir -p $ROOTFS/etc/systemd/network/ && \
-    echo "Here 5" && \
+    echo \\\"Here 5\\\" && \
     mkdir -p $ROOTFS/usr/share/firmware/ && \
-    echo "Here 6" && \
+    echo \\\"Here 6\\\" && \
     mkdir -p $ROOTFS/usr/share/ovmf/ && \
-    echo "Here 7" && \
+    echo \\\"Here 7\\\" && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/wired.network > $ROOTFS/etc/systemd/network/wired.network && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvtap0.netdev > $ROOTFS/etc/systemd/network/macvtap0.netdev && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvtap1.netdev > $ROOTFS/etc/systemd/network/macvtap1.netdev && \
@@ -412,7 +412,7 @@ run "Enabling Ubuntu boostrap items" \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvlan0.network > $ROOTFS/etc/systemd/network/macvlan0.network && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/udev/rules.d/10-kvm.rules > $ROOTFS/etc/udev/rules.d/10-kvm.rules && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/udev/rules.d/80-tap-kvm-group.rules > $ROOTFS/etc/udev/rules.d/80-tap-kvm-group.rules && \
-    echo "Here 8" && \
+    echo \\\"Here 8\\\" && \
     sed -i 's#^GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"#GRUB_CMDLINE_LINUX_DEFAULT=\"kvmgt vfio-iommu-type1 vfio-mdev i915.enable_gvt=1 kvm.ignore_msrs=1 intel_iommu=on drm.debug=0\"#' $ROOTFS/etc/default/grub && \
     echo \"${HOSTNAME}\" > $ROOTFS/etc/hostname && \
     echo \"LANG=en_US.UTF-8\" >> $ROOTFS/etc/default/locale && \
