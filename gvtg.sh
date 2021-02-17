@@ -9,6 +9,7 @@ kversion="vt-sharing-ubuntu"
 repo="https://github.com/intel/linux-intel-lts"
 branch="5.4/yocto"
 srcrev="e54641516247a77adbc3c314ddf1f7e8f7cc2787"
+kernel_config_url="https://kernel.ubuntu.com/~kernel-ppa/config/focal/linux/5.4.0-44.48/amd64-config.flavour.generic"
 qemu_rel=qemu-4.2.0
 qemu_dir=${qemu_rel}
 prebuilt="prebuilt"
@@ -118,11 +119,11 @@ function pull_kernel() {
 }
 
 function kernel_config() {
-  mv /etc/initramfs-tools/modules "/etc/initramfs-tools/modules_`date`"
-  echo $'kvmgt\nvfio\nvfio_mdev\nvfio-pci\nvfio_iommu_type1' >> /etc/initramfs-tools/modules
-  update-initramfs -u
+  if [ ! -z "$kernel_config_url" ]; then
+    /usr/bin/wget -q -O $work_dir/$kdir/.config $kernel_config_url
+  fi
 
-  ( cd $work_dir/$kdir && echo “”|make oldconfig && cd $cwd)
+  ( cd $work_dir/$kdir && yes "" | make oldconfig && cd $cwd)
 }
 
 function compile_kernel() {
