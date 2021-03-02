@@ -55,6 +55,7 @@ function build_qemu_bin() {
     >> build.out 2>&1
   make --silent -j$(nproc) >> build.out 2>&1
   make --silent -j$(nproc) install >> build.out 2>&1
+  cp -v x86_64-softmmu/qemu-system-x86_64 output/bin/
   cd $cwd
 }
 
