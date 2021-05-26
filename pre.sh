@@ -387,10 +387,7 @@ fi
 # --- Enabling Ubuntu boostrap items ---
 HOSTNAME="ubuntu-$(tr </dev/urandom -dc a-f0-9 | head -c10)"
 run "Enabling Ubuntu boostrap items" \
-    "wget --header \"Authorization: token ${param_token}\" -O $ROOTFS/etc/systemd/system/show-ip.service ${param_basebranch}/systemd/show-ip.service && \
-    mkdir -p $ROOTFS/etc/systemd/system/network-online.target.wants/ && \
-    ln -s /etc/systemd/system/show-ip.service $ROOTFS/etc/systemd/system/network-online.target.wants/show-ip.service; \
-    wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/hosts | sed -e \"s#@@HOSTNAME@@#${HOSTNAME}#g\" > $ROOTFS/etc/hosts && \
+    "wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/hosts | sed -e \"s#@@HOSTNAME@@#${HOSTNAME}#g\" > $ROOTFS/etc/hosts && \
     mkdir -p $ROOTFS/etc/systemd/network/ && \
     mkdir -p $ROOTFS/usr/share/firmware/ && \
     mkdir -p $ROOTFS/usr/share/ovmf/ && \
@@ -403,6 +400,7 @@ run "Enabling Ubuntu boostrap items" \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvtap2.network > $ROOTFS/etc/systemd/network/macvtap2.network && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvlan0.netdev > $ROOTFS/etc/systemd/network/macvlan0.netdev && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/systemd/network/macvlan0.network > $ROOTFS/etc/systemd/network/macvlan0.network && \
+    wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/netplan/01-netcfg.yaml > $ROOTFS/etc/netplan/01-netcfg.yaml && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/udev/rules.d/10-kvm.rules > $ROOTFS/etc/udev/rules.d/10-kvm.rules && \
     wget --header \"Authorization: token ${param_token}\" -O - ${param_basebranch}/files/etc/udev/rules.d/80-tap-kvm-group.rules > $ROOTFS/etc/udev/rules.d/80-tap-kvm-group.rules && \
     sed -i 's#^GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash\"#GRUB_CMDLINE_LINUX_DEFAULT=\"kvmgt vfio-iommu-type1 vfio-mdev i915.enable_gvt=1 kvm.ignore_msrs=1 intel_iommu=on drm.debug=0\"#' $ROOTFS/etc/default/grub && \
@@ -417,6 +415,7 @@ run "Enabling Ubuntu boostrap items" \
     export DEBIAN_FRONTEND=noninteractive && \
     systemctl enable systemd-networkd && \
     update-grub && \
+    netplan apply && \
     locale-gen --purge en_US.UTF-8 && \
     dpkg-reconfigure --frontend=noninteractive locales\"'" \
     "$TMP/provisioning.log"
@@ -428,8 +427,8 @@ run "Enabling Kernel Modules at boot time" \
     echo 'dm-crypt' > $ROOTFS/etc/modules-load.d/dm-crypt.conf && \
     echo 'fuse' > $ROOTFS/etc/modules-load.d/fuse.conf && \
     echo 'nbd' > $ROOTFS/etc/modules-load.d/nbd.conf && \
-    echo 'i915 enable_gvt=1' > $ROOTFS/etc/modules-load.d/i915.conf \
-    echo 'vfio-pci' > $ROOTFS/etc/modules-load.d/vfio-pci.conf \
+    echo 'i915 enable_gvt=1' > $ROOTFS/etc/modules-load.d/i915.conf && \
+    echo 'vfio-pci' > $ROOTFS/etc/modules-load.d/vfio-pci.conf && \
     echo 'vfio_mdev' > $ROOTFS/etc/modules-load.d/vfio_mdev.conf" \
     "$TMP/provisioning.log"
 
